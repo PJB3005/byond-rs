@@ -1,6 +1,5 @@
 //! Helpers for managing call()s from BYOND code.
 use std::ffi::{CString, CStr, NulError};
-use std::ptr::null;
 use std::slice;
 use std::sync::Mutex;
 use libc;

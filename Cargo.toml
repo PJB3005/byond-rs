@@ -6,10 +6,8 @@ description = "A crate for interfacing with the BYOND game engine."
 readme      = "README.md"
 keywords    = ["DM", "BYOND"]
 license     = "MIT"
-
-[lib]
-name        = "byond"
-crate-type  = ["staticlib"]
+homepage    = "https://github.com/PJB3005/byond-rs"
+repository  = "https://github.com/PJB3005/byond-rs"
 
 [dependencies]
 libc        = "0.2.19"
