@@ -2,10 +2,9 @@
 use std::ffi::{CString, CStr, NulError};
 use std::slice;
 use std::sync::Mutex;
-use libc;
+//use libc;
 
-// Yes this will totally break if multithreading would happen, but won't so hooray!
-
+// Yes this will totally break if multithreading would happen, but it won't so hooray!
 // Can't use an on-stack value to give back to BYOND for obvious reasons.
 lazy_static! {
     static ref BYOND_RETURN: Mutex<CString> = {
@@ -14,8 +13,9 @@ lazy_static! {
 }
 
 
-/// Returns a pointer that can be returned to BYOND from a call()ed function, to return a string.
-pub fn return_to_byond(string: &str) -> Result<*const libc::c_char, NulError> {
+/// Returns a pointer that can be returned to BYOND from a `call()()`ed function,
+/// to return a string.
+pub fn return_to_byond(string: &str) -> Result<*const i8, NulError> {
     let cstr = CString::new(string.as_bytes())?;
 
     let mut mutex = BYOND_RETURN.lock().unwrap();
@@ -26,7 +26,9 @@ pub fn return_to_byond(string: &str) -> Result<*const libc::c_char, NulError> {
 
 
 /// Turns the arguments supplied by BYOND into a more workable vector.
-pub fn from_byond_args(n: libc::c_int, v: *const *const libc::c_schar) -> Vec<String> {
+///
+/// All strings are converted into UTF-8 losilly. You've been warned.
+pub fn from_byond_args(n: i32, v: *const *const i8) -> Vec<String> {
     let mut args = Vec::new();
     unsafe {
         let slice = slice::from_raw_parts(v, n as usize);

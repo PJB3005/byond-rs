@@ -10,5 +10,5 @@ homepage    = "https://github.com/PJB3005/byond-rs"
 repository  = "https://github.com/PJB3005/byond-rs"
 
 [dependencies]
-libc        = "0.2.19"
+#libc        = "0.2.19"
 lazy_static = "0.2.2"
