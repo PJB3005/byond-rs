@@ -15,7 +15,7 @@ pub mod call;
 /// extern crate byond;
 /// // Define a function called "test", taking two arguments.
 /// byond!(thing: one, two; {
-///     &format!("{} + {}", one, two)
+///     format!("{} + {}", one, two)
 /// });
 ///
 /// // Get off my back rustdoc.
@@ -32,17 +32,18 @@ pub mod call;
 /// # Panics
 /// Panics if the amount of arguments supplied by BYOND is too small.
 /// Note that extra arguments are ignored.
+/// Also panics if a NUL byte is attempted to be returned.
 #[macro_export]
 macro_rules! byond {
     ( $n:ident ; $c:block ) => {
         #[no_mangle]
-        pub extern "C" fn $n (__n: i32, __v: *const *const i8) -> *const i8 {
-            $crate::call::return_to_byond($c).unwrap()
+        pub unsafe extern "C" fn $n (__n: i32, __v: *const *const i8) -> *const i8 {
+            $crate::call::return_to_byond((|| $c)()).unwrap()
         }
     };
     ( $n:ident : $( $p:ident ),* ; $c:block ) => {
         #[no_mangle]
-        pub extern "C" fn $n (__n: i32, __v: *const *const i8) -> *const i8 {
+        pub unsafe extern "C" fn $n (__n: i32, __v: *const *const i8) -> *const i8 {
             let __args = $crate::call::from_byond_args(__n, __v);
 
             let mut __count = 0;
@@ -50,8 +51,10 @@ macro_rules! byond {
                 let $p: &str = &__args[__count];
                 __count += 1;
             )*
+        
+            let ret = (|| $c)();
 
-            $crate::call::return_to_byond($c).unwrap()
+            $crate::call::return_to_byond(ret).unwrap()
         }
     };
 }

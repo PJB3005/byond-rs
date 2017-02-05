@@ -1,7 +1,8 @@
-//! Helpers for managing call()s from BYOND code.
+//! Helpers for managing `call()()`s from BYOND code.
 use std::ffi::{CString, CStr, NulError};
 use std::slice;
 use std::sync::Mutex;
+use std::ptr::null;
 //use libc;
 
 // Yes this will totally break if multithreading would happen, but it won't so hooray!
@@ -15,8 +16,8 @@ lazy_static! {
 
 /// Returns a pointer that can be returned to BYOND from a `call()()`ed function,
 /// to return a string.
-pub fn return_to_byond(string: &str) -> Result<*const i8, NulError> {
-    let cstr = CString::new(string.as_bytes())?;
+pub fn return_to_byond<T: AsRef<str>>(string: T) -> Result<*const i8, NulError> {
+    let cstr = CString::new(string.as_ref().as_bytes())?;
 
     let mut mutex = BYOND_RETURN.lock().unwrap();
 
@@ -39,4 +40,45 @@ pub fn from_byond_args(n: i32, v: *const *const i8) -> Vec<String> {
         }
     }
     args
+}
+
+/// Allows one to easily test BYOND callbacks.
+/// Does *not* take arguments to pass down.
+///
+/// Warning: This passes a straight nullptr to the function's argument list.
+/// As such, if the function expects any arguments, this will probably segfault.
+/// Non-UTF-8 returned strings are lossily converted.
+/// # Panics
+/// Panics if the strings in args contain a NUL byte.
+pub fn test_byond_call(func: unsafe extern "C" fn(i32, *const *const i8) -> *const i8) -> String {
+    unsafe {
+        let ptr = func(0, null());
+        CStr::from_ptr(ptr).to_string_lossy().into_owned()
+    }
+}
+
+/// Allows one to easily test BYOND callbacks.
+/// Takes arguments that are passed down to the function.
+///
+/// # Panics
+/// Panics if the strings in args contain a NUL byte.
+/// Non-UTF-8 strings are lossily converted.
+pub fn test_byond_call_args(func: unsafe extern "C" fn(i32, *const *const i8) -> *const i8,
+                            args: &[&str])
+                            -> String {
+    // Need to keep track of the CStrs so they dont Drop.
+    let mut cstrs = Vec::with_capacity(args.len());
+    let mut ptrs = Vec::with_capacity(args.len());
+
+    for string in args {
+        let cstr = CString::new(string.as_bytes()).unwrap();
+        let ptr = cstr.as_ptr();
+        cstrs.push(cstr);
+        ptrs.push(ptr);
+    }
+
+    unsafe {
+        let ptr = func(ptrs.len() as i32, ptrs.as_slice().as_ptr());
+        CStr::from_ptr(ptr).to_string_lossy().into_owned()
+    }
 }
