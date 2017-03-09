@@ -31,7 +31,7 @@ fn test_calls() {
 #[test]
 #[should_panic]
 fn test_panic() {
-    test_byond_call_args(test_args, &[]);
+    test_byond_call_args::<&str>(test_args, &[]);
 }
 
 #[test]

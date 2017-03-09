@@ -63,15 +63,18 @@ pub fn test_byond_call(func: unsafe extern "C" fn(i32, *const *const i8) -> *con
 /// # Panics
 /// Panics if the strings in args contain a NUL byte.
 /// Non-UTF-8 strings are lossily converted.
-pub fn test_byond_call_args(func: unsafe extern "C" fn(i32, *const *const i8) -> *const i8,
-                            args: &[&str])
-                            -> String {
+pub fn test_byond_call_args<P>(func: unsafe extern "C" fn(i32, *const *const i8) -> *const i8,
+                               args: &[P])
+                               -> String
+    where P: AsRef<[u8]>
+{
     // Need to keep track of the CStrs so they dont Drop.
     let mut cstrs = Vec::with_capacity(args.len());
     let mut ptrs = Vec::with_capacity(args.len());
 
-    for string in args {
-        let cstr = CString::new(string.as_bytes()).unwrap();
+    for arg in args {
+        let arg = arg.as_ref();
+        let cstr = CString::new(arg).unwrap();
         let ptr = cstr.as_ptr();
         cstrs.push(cstr);
         ptrs.push(ptr);

@@ -51,7 +51,7 @@ macro_rules! byond {
                 let $p: &str = &__args[__count];
                 __count += 1;
             )*
-        
+
             let ret = (|| $c)();
 
             $crate::call::return_to_byond(ret).unwrap()

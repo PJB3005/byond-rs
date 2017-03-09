@@ -1,6 +1,6 @@
 [package]
 name        = "byond"
-version     = "0.3.0"
+version     = "0.3.1"
 authors     = ["PJB3005 <pieterjan.briers@gmail.com>"]
 description = "A crate for interfacing with the BYOND game engine."
 readme      = "README.md"
