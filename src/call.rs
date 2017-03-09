@@ -16,8 +16,8 @@ lazy_static! {
 
 /// Returns a pointer that can be returned to BYOND from a `call()()`ed function,
 /// to return a string.
-pub fn return_to_byond<T: AsRef<str>>(string: T) -> Result<*const i8, NulError> {
-    let cstr = CString::new(string.as_ref().as_bytes())?;
+pub fn return_to_byond<T: AsRef<[u8]>>(string: T) -> Result<*const i8, NulError> {
+    let cstr = CString::new(string.as_ref())?;
 
     let mut mutex = BYOND_RETURN.lock().unwrap();
 
