@@ -9,6 +9,13 @@ license     = "MIT"
 homepage    = "https://github.com/PJB3005/byond-rs"
 repository  = "https://github.com/PJB3005/byond-rs"
 
+[lib]
+name = "byond"
+path = "src/lib.rs"
+
+[[bin]]
+name = "rdm" # Rust Dream Maker
+path = "src/bin/rdm/main.rs"
+
 [dependencies]
-#libc        = "0.2.19"
 lazy_static = "0.2.2"
