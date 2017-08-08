@@ -1,14 +1,15 @@
 use std::rc::Rc;
+use std::path::{PathBuf, Path};
 
 pub struct Token {
-    file: Rc<Box<str>>,
+    file: Rc<PathBuf>,
     line: usize,
     column: usize,
     token_type: TokenType,
 }
 
 impl Token {
-    pub fn get_file(&self) -> &str {
+    pub fn get_file(&self) -> &Path {
         &self.file
     }
 
@@ -31,11 +32,17 @@ pub enum TokenType {
     /// Represents a string, e.g. "Hi!"
     String(String),
     /// Represents a BYOND number, e.g. 10, #.INF, 5e+10
+    /// BYOND numbers are always 32-bit floats.
     Number(f32),
-    /// Represents an increase in the indentation level.
+    /// Represents an increase in indentation.
     Indent,
-    /// Represents a decrease in the indentation level.
+    /// Represents a decrease in indentation.
     Deindent,
+    /// {
+    BraceOpen,
+    /// }
+    BraceClose,
     Newline,
-    Semicolon
+    /// ;
+    Semicolon,
 }
