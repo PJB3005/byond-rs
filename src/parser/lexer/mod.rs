@@ -2,6 +2,7 @@
 
 mod token;
 mod lexer;
+mod charstream;
 
 pub use self::token::*;
 pub use self::lexer::*;

@@ -2,17 +2,12 @@ use std::rc::Rc;
 use std::path::{PathBuf, Path};
 
 pub struct Token {
-    file: Rc<PathBuf>,
     line: usize,
     column: usize,
     token_type: TokenType,
 }
 
 impl Token {
-    pub fn get_file(&self) -> &Path {
-        &self.file
-    }
-
     pub fn get_line(&self) -> usize {
         self.line
     }
@@ -45,4 +40,8 @@ pub enum TokenType {
     Newline,
     /// ;
     Semicolon,
+}
+
+pub enum PreprocessorItem {
+
 }
