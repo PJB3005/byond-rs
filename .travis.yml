@@ -11,8 +11,5 @@ matrix:
 
 cache: cargo
 
-before_script:
-- rustup target add i686-unknown-linux-gnu
-
 script:
-- cargo test --verbose --target i686-unknown-linux-gnu
+- cargo test --verbose
