@@ -1,6 +1,6 @@
 [package]
 name        = "byond"
-version     = "0.3.2"
+version     = "0.4.0"
 authors     = ["PJB3005 <pieterjan.briers@gmail.com>"]
 description = "A crate for interfacing with the BYOND game engine."
 readme      = "README.md"
@@ -8,7 +8,4 @@ keywords    = ["DM", "BYOND"]
 license     = "MIT"
 homepage    = "https://github.com/PJB3005/byond-rs"
 repository  = "https://github.com/PJB3005/byond-rs"
-
-[dependencies]
-#libc        = "0.2.19"
-lazy_static = "0.2.2"
+edition     = "2018"

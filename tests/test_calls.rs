@@ -1,6 +1,4 @@
-#[macro_use]
-extern crate byond;
-
+use byond::byond;
 use byond::call::{test_byond_call, test_byond_call_args};
 
 byond!(test_args: a, b, c; {
@@ -21,13 +19,17 @@ byond!(test_return: a; {
 
 #[test]
 fn test_calls() {
-    assert_eq!(test_byond_call_args(test_args, &["A", "B", "C"]),
-               "A + B + C");
+    assert_eq!(
+        test_byond_call_args(test_args, &["A", "B", "C"]),
+        "A + B + C"
+    );
     assert_eq!(test_byond_call(test_noargs), "Hello, World!");
     assert_eq!(test_byond_call_args(test_return, &["1"]), "hi!");
     assert_eq!(test_byond_call_args(test_return, &["0"]), "bye!");
 }
 
+// Tests disabled because panicking across C FFI boundaries is undefined behavior.
+/*
 #[test]
 #[should_panic]
 fn test_panic() {
@@ -39,3 +41,4 @@ fn test_panic() {
 fn test_panic_noargs() {
     test_byond_call(test_args);
 }
+*/

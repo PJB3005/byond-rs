@@ -1,25 +1,19 @@
-#[macro_use]
-extern crate lazy_static;
-//extern crate libc;
-
 pub mod call;
 
 /// Define a function that BYOND can call into.
 ///
-/// The list of arguments is always `&str`, and the code block must return an `&str`.
+/// The list of arguments is always `&str`, and the code block must return an `impl AsRef<[u8]>`.
 /// If you want finer control over the arguments and return value,
 /// consider using `from_byond_args` and `return_to_byond()` directly.
 /// # Examples
 /// ```
-/// #[macro_use]
-/// extern crate byond;
+/// # use byond::byond;
 /// // Define a function called "test", taking two arguments.
 /// byond!(thing: one, two; {
 ///     format!("{} + {}", one, two)
 /// });
 ///
-/// // Get off my back rustdoc.
-/// fn main(){}
+/// # fn main(){}
 /// ```
 ///
 /// The above code can be called with the following DM code:
@@ -37,13 +31,13 @@ pub mod call;
 macro_rules! byond {
     ( $n:ident ; $c:block ) => {
         #[no_mangle]
-        pub unsafe extern "C" fn $n (__n: i32, __v: *const *const i8) -> *const i8 {
+        pub unsafe extern "C" fn $n (__n: i32, __v: *const *const std::os::raw::c_char) -> *const std::os::raw::c_char {
             $crate::call::return_to_byond((|| $c)()).unwrap()
         }
     };
     ( $n:ident : $( $p:ident ),* ; $c:block ) => {
         #[no_mangle]
-        pub unsafe extern "C" fn $n (__n: i32, __v: *const *const i8) -> *const i8 {
+        pub unsafe extern "C" fn $n (__n: i32, __v: *const *const std::os::raw::c_char) -> *const std::os::raw::c_char {
             let __args = $crate::call::from_byond_args(__n, __v);
 
             let mut __count = 0;
